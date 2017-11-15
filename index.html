@@ -1,0 +1,49 @@
+<html>
+<body style="text-align: center;">
+<div id="qrs"></div>
+<p>
+<textarea id="list" rows="10" cols="40"></textarea><br />
+<input type="submit" onclick="generate()" value="Generate">
+</p>
+<script>
+
+var url = location.href;
+var idx = url.indexOf("#")+1;
+var base, parms;
+
+if(idx > 0) {
+	base = url.substring(0,idx-1);
+	parms = url.substring(idx);
+	parms = parms.split(";");
+	document.getElementById("list").value = parms.join("\n");
+}
+else {
+	base = url;
+	history.pushState('', '', base+'#AB12345CD,example');
+	document.getElementById("list").value = "AB12345CD,example";
+}
+
+function generate() {
+	var list = document.getElementById("list").value;
+	var lines = list.split("\n");
+	parms = lines.join(";");
+	history.pushState('', '', base+'#'+parms);
+
+	var qrs = "";
+
+	lines.forEach(function(line) {
+    	console.log(line);
+    	var data = line.split(",");
+		if(data[0]) {
+			var code = data[0];
+			var info = "<b>"+code.trim()+"</b> "+data[1];
+			qrs = qrs+"\n<p><img src='https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl="+code.trim()+"'><br />"+info+"</p>";
+		}
+	});
+	document.getElementById("qrs").innerHTML = qrs;
+}
+
+
+</script>
+</body>
+</html>
